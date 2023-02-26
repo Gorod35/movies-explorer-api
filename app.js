@@ -4,14 +4,14 @@ const cors = require('cors');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
-const { limiter, devDatabaseUrl } = require('./utils/config');
+const { limiter } = require('./utils/config');
 const router = require('./routes/routes');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000, NODE_ENV, DATABASE_URL } = process.env;
+const { PORT = 3000 } = process.env;
 
 mongoose.set('strictQuery', false);
-mongoose.connect(NODE_ENV === 'production' ? DATABASE_URL : devDatabaseUrl);
+mongoose.connect('mongodb://localhost:27017/bitfilmsdb');
 
 const app = express();
 
