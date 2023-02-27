@@ -5,7 +5,8 @@ const NotFoundError = require('../errors/not-found-err');
 const NotOwnerError = require('../errors/not-owner-err');
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  const userId = req.user._id;
+  Movie.find({ owner: userId })
     .then((movies) => res.send(movies.reverse()))
     .catch(next);
 };

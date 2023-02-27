@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { limiter, devDatabaseUrl } = require('./utils/config');
 const router = require('./routes/routes');
+const errorHandler = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000, NODE_ENV, DATABASE_URL } = process.env;
@@ -36,15 +37,6 @@ app.use(router);
 app.use(errorLogger);
 
 app.use(errors());
+app.use(errorHandler);
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-
-  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
-  next();
-});
-
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(process.env);
-});
+app.listen(PORT);
