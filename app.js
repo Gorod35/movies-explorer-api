@@ -4,14 +4,15 @@ const cors = require('cors');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
-const { limiter } = require('./utils/config');
+const { limiter, devDatabaseUrl } = require('./utils/config');
 const router = require('./routes/routes');
+const errorHandler = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000, NODE_ENV, DATABASE_URL } = process.env;
 
 mongoose.set('strictQuery', false);
-mongoose.connect(NODE_ENV === 'production' ? DATABASE_URL : 'mongodb://localhost:27017/bitfilmsdb');
+mongoose.connect(NODE_ENV === 'production' ? DATABASE_URL : devDatabaseUrl);
 
 const app = express();
 
@@ -36,12 +37,6 @@ app.use(router);
 app.use(errorLogger);
 
 app.use(errors());
-
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-
-  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
-  next();
-});
+app.use(errorHandler);
 
 app.listen(PORT);

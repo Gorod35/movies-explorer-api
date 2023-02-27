@@ -19,7 +19,7 @@ const getUserInfo = (req, res, next) => {
 const updateUser = (req, res, next) => {
   const { name, email } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
-    .orFail(() => next(new BadRequestError('Пользователь с указанным _id не найден.')))
+    .orFail(() => next(new NotFoundError('Пользователь с указанным _id не найден.')))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
